@@ -4,25 +4,17 @@
  *
  * Calendar block add / edit form
  *
- * @author Oliver Green <oliver@devisegraphics.co.uk>
- * @link http://www.devisegraphics.co.uk
+ * @author Oliver Green <dubious@codeblog.co.uk>
+ * @link http://www.codeblog.co.uk
  * @license http://www.gnu.org/licenses/gpl.html GPL
  * @version $Id$
  *
  */
 
-$pageSelector = Loader::helper('form/page_selector');
+$pageSelector = \Loader::helper('form/page_selector');
 ?>
 
 <div class="ccm-ui">
-    
-    <label for="calendarType">Calendar Size:</label>
-    <select name="calendarType">
-        <option value="0"<?php echo ($calendarType == '0') ? ' selected="selected"' : ''; ?>>Full Calendar</option>
-        <option value="1"<?php echo ($calendarType == '1') ? ' selected="selected"' : ''; ?>>Mini Calendar</option>
-    </select>
-    
-    <br /><br />
     
     Display events that are located:
     <input type="radio" name="eventsFrom" value="PARENT"<?php echo (intval($parentCID) == 0) ? 'checked="checked"' : ''; ?>> beneath this page
@@ -42,12 +34,12 @@ $pageSelector = Loader::helper('form/page_selector');
          
             $('input[name=eventsFrom]').each(function(){
                 
-                if($(this).attr('checked') == 'checked' && $(this).val() == 'PARENT') {
+                if($(this).prop('checked') && $(this).val() == 'PARENT') {
                     
                     $('#pageSelectorContainer').css('display', 'none');
                     $('input[name=parentCID]').val('0');
                    
-                } else if($(this).attr('checked') == 'checked') {
+                } else if($(this).prop('checked')) {
                     
                     $('#pageSelectorContainer').css('display', 'block');
                     
