@@ -37,10 +37,10 @@ class Controller extends BlockController
     public function registerViewAssets()
     {
         $this->requireAsset('javascript', 'jquery');
-        //if ('mini_calendar' === $this->getBlockObject()->bFilename) {   
+        if ('mini_calendar' === $this->getBlockObject()->bFilename) {   
             $this->requireAsset('minicalendar');
-        //} else {
+        } else {
             $this->requireAsset('fullcalendar');
-        //}
+        }
     }
 }
