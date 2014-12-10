@@ -24,7 +24,7 @@ $parentCID = ($parentCID > 0) ? $parentCID : $c->getCollectionID();?>
                     var date = new Date(data[i].start);
                         title += date.getHours() + ':' + ((date.getMinutes() < 10) ? date.getMinutes() + '0' : date.getMinutes()) + ' ' + data[i].title + '<br />';
                 }
-                $(evt.delegateTarget).tooltip({title: title.substr(0,title.length - 6), container: 'body'}).tooltip('show');
+                $(evt.delegateTarget).tooltip({title: title.substr(0,title.length - 6), container: 'body', html: true}).tooltip('show');
             },
             error: function(error) { alert('The calendar could not be loaded.'); }
         });
