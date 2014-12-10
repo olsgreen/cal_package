@@ -24,9 +24,7 @@ $parentCID = ($parentCID > 0) ? $parentCID : $c->getCollectionID();?>
                 url: '<?php echo View::url("/get-cal-json", $parentCID); ?>',
                 error: function(data) {
                     alert('There was an error while fetching the events! Please try again.');
-                },
-                color: '#8a5c85',
-                textColor: 'white'
+                }
             },
             timeFormat: 'h:mmtt',
         });
