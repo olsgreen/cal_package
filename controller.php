@@ -38,7 +38,7 @@ class Controller extends Package
 
     public function getPackageName() 
     {
-    	return t("Cal Package");
+    	return t("Calendar Components Package");
     }
 
     public function on_start()
