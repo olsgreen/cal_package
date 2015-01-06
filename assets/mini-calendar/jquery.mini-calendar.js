@@ -9,6 +9,7 @@ $(function(){
             settings = $.extend({
                             url: '',
                             data: {},
+                            days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                             events: [],
                             dayOnMouseOver: function(evt, data){},
                             dayOnMouseOut: function(evt, data){},
@@ -45,8 +46,15 @@ $(function(){
             ele.append($('<div></div>').html(months[currentDate.month]).addClass('month-name'));
             
             // Add a header
-            var th = $('<tr></tr>').addClass('header').append($('<td></td>').html('Sun')).append($('<td></td>').html('Mon')).append($('<td></td>').html('Tue')).append($('<td></td>').html('Wed'))
-            .append($('<td></td>').html('Thu')).append($('<td></td>').html('Fri')).append($('<td></td>').html('Sat'));
+            var th = $('<tr></tr>').addClass('header')
+            .append($('<td></td>').html(settings.days[0]))
+            .append($('<td></td>').html(settings.days[1]))
+            .append($('<td></td>').html(settings.days[2]))
+            .append($('<td></td>').html(settings.days[3]))
+            .append($('<td></td>').html(settings.days[4]))
+            .append($('<td></td>').html(settings.days[5]))
+            .append($('<td></td>').html(settings.days[6]));
+
             calendar.append(th);
             
             for(var i=0; i <= daysToProcess; i++) {
