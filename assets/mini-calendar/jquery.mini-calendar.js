@@ -10,6 +10,9 @@ $(function(){
                             url: '',
                             data: {},
                             days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                            months: ['January', 'February', 'March', 'April', 'May', 
+                                   'June', 'July', 'August', 'September', 'October', 
+                                   'November', 'December'],
                             events: [],
                             dayOnMouseOver: function(evt, data){},
                             dayOnMouseOut: function(evt, data){},
@@ -18,9 +21,6 @@ $(function(){
                         }, settings);
             
         function renderMonth(ele, month, year) {
-            
-            var months = new Array("January", "February", "March", "April", "May", 
-                                   "June", "July", "August", "September", "October", "November", "December");
     
             // Fill in the blanks if needed
             if(typeof month == 'number') currentDate.month = month;
@@ -43,7 +43,7 @@ $(function(){
             var calendar = $('<table></table>'), tr;
             
             // Add month name
-            ele.append($('<div></div>').html(months[currentDate.month]).addClass('month-name'));
+            ele.append($('<div></div>').html(settings.months[currentDate.month]).addClass('month-name'));
             
             // Add a header
             var th = $('<tr></tr>').addClass('header')
