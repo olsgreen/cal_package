@@ -29,7 +29,7 @@ class Controller extends Package
 
     protected $pkgHandle = 'cal_package';
     protected $appVersionRequired = '5.7.1';
-    protected $pkgVersion = '0.0.1';
+    protected $pkgVersion = '0.0.2';
 
     public function getPackageDescription() 
     {
