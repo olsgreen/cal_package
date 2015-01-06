@@ -38,15 +38,18 @@ html .fc,
 .fc-header-left {
 	width: 25%;
 	text-align: left;
+	border-top: none;
 	}
 	
 .fc-header-center {
 	text-align: center;
+	border-top: none;
 	}
 	
 .fc-header-right {
 	width: 25%;
 	text-align: right;
+	border-top: none;
 	}
 	
 .fc-header-title {
@@ -102,6 +105,7 @@ html .fc,
 	
 .fc-content {
 	clear: both;
+	border-top: 1px solid #ddd;
 	}
 	
 .fc-view {
