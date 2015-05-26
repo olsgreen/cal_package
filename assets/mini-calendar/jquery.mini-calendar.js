@@ -13,6 +13,7 @@ $(function(){
                             months: ['January', 'February', 'March', 'April', 'May', 
                                    'June', 'July', 'August', 'September', 'October', 
                                    'November', 'December'],
+                            showYearInTitle: false,
                             events: [],
                             dayOnMouseOver: function(evt, data){},
                             dayOnMouseOut: function(evt, data){},
@@ -41,9 +42,10 @@ $(function(){
             
             // Build our table
             var calendar = $('<table></table>'), tr;
-            
             // Add month name
-            ele.append($('<div></div>').html(settings.months[currentDate.month]).addClass('month-name'));
+            var monthName = $('<div></div>').html(settings.months[currentDate.month]).addClass('month-name');
+            if (settings.showYearInTitle) monthName.append(' ' + currentDate.year);
+            ele.append(monthName);
             
             // Add a header
             var th = $('<tr></tr>').addClass('header')
@@ -65,7 +67,7 @@ $(function(){
                     tr = $('<tr></tr>');                
                 }
                 
-                var td = $('<td></td>').html(startFrom.getDate()).attr('data-date', startFrom.getFullYear() + '-' + startFrom.getMonth() + '-' + startFrom.getDate());
+                var td = $('<td></td>').append($('<span></span>').html(startFrom.getDate())).attr('data-date', startFrom.getFullYear() + '-' + startFrom.getMonth() + '-' + startFrom.getDate());
                 
                 // If the day is not part of the requested month mark it
                 if(startFrom.getMonth() != currentDate.month) td.addClass('filler-day');
