@@ -104,8 +104,8 @@ $(function(){
             for(var i=0; i < settings.events.length; i++) {
                 
                 // Calculate it's date range
-                var start = new Date(settings.events[i].start),
-                    end = new Date(settings.events[i].end),
+                var start = new Date.parse(settings.events[i].start),
+                    end = new Date.parse(settings.events[i].end),
                     startDay = true;
                 
                 while(start <= end) {

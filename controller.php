@@ -29,7 +29,7 @@ class Controller extends Package
 
     protected $pkgHandle = 'cal_package';
     protected $appVersionRequired = '5.7.1';
-    protected $pkgVersion = '0.0.3';
+    protected $pkgVersion = '0.0.4';
 
     public function getPackageDescription() 
     {
@@ -222,12 +222,12 @@ class Controller extends Package
                         'Y-m-d H:i:s',
                         $page->getAttribute('cal_start_date')
                     )
-                    ->format(DATE_RFC2822),
+                    ->format(DATE_ISO8601),
                     'end' => DateTime::createFromFormat(
                         'Y-m-d H:i:s',
                         $page->getAttribute('cal_end_date')
                     )
-                    ->format(DATE_RFC2822),
+                    ->format(DATE_ISO8601),
                     'url' => View::url($page->getCollectionPath()),
                     'allDay' => false,
                     'ignoreTimezone' => false
