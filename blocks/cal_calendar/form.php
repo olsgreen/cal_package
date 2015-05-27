@@ -49,13 +49,13 @@ $pageSelector = \Loader::helper('form/page_selector');
                     
                     $('#pageSelectorContainer, #gcalContainer').css('display', 'none');
                     $('input[name=parentCID]').val('0');
-                    $('input[name=calendarId],input[name=apiKey').val('');
+                    $('input[name=calendarId],input[name=apiKey]').val('');
                    
                 } else if($(this).prop('checked') && $(this).val() == '1') {
                     
                     $('#pageSelectorContainer').css('display', 'block');
                     $('#gcalContainer').css('display', 'none');
-                    $('input[name=calendarId],input[name=apiKey').val('');
+                    $('input[name=calendarId],input[name=apiKey]').val('');
                     
                 } else if($(this).prop('checked') && $(this).val() == '2') {
 
