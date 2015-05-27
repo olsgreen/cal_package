@@ -14,6 +14,8 @@ $(function(){
                                    'June', 'July', 'August', 'September', 'October', 
                                    'November', 'December'],
                             showYearInTitle: false,
+                            googleApiKey: false,
+                            googleCalendarId: false,
                             events: [],
                             dayOnMouseOver: function(evt, data){},
                             dayOnMouseOut: function(evt, data){},
@@ -168,6 +170,19 @@ $(function(){
             });
             
         }
+
+        function getGoogleData()
+        {
+            var test = $.fullCalendar.sourceFetchers[0](
+            {
+                googleCalendarApiKey: 'AIzaSyACspEsSbldhRyvER3ud6TsPbM7NWmyc04', 
+                googleCalendarId: 'libfd9tmcnncjcbia44eu4h6ts@group.calendar.google.com', 
+                timeFormat: 'h:mm',
+                success: function(data) { settings.events = data; dataComplete.notify(); },
+            }, $.fullCalendar.moment(new Date('05/01/2015')), $.fullCalendar.moment(new Date('05/31/2015')));
+            test.dataType = 'json';
+            $.ajax(test);
+        }
         
         // Process each passed element and maintain the chain
         return this.each( function() {     
@@ -198,6 +213,8 @@ $(function(){
             // Get the data if needed
             if(settings.url.length > 0) {
                 getData();
+            } else if(settings.googleCalendarId) {
+                getGoogleData();
             } else {
                 dataComplete.notify();   
             }

@@ -6,10 +6,17 @@
 			<key />
 			<unsigned />
 		</field>
+
+		<field name="source" type="I">
+			<unsigned /> <!-- 0 = Parent | 1 = Other Page | 2 = Google !-->
+		</field>
 		
 		<field name="parentCID" type="I">
 			<unsigned />
 		</field>
+
+		<field name="apiKey" type="X2"></field>
+		<field name="calendarId" type="X2"></field>
         
 	</table>
 </schema>

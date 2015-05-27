@@ -17,11 +17,22 @@ $pageSelector = \Loader::helper('form/page_selector');
 <div class="ccm-ui">
     
     Display events that are located:
-    <input type="radio" name="eventsFrom" value="PARENT"<?php echo (intval($parentCID) == 0) ? 'checked="checked"' : ''; ?>> beneath this page
-    <input type="radio" name="eventsFrom" value="OTHER"<?php echo (intval($parentCID) > 0) ? 'checked="checked"' : ''; ?>> beneath another page    
+    <br>
+    <input type="radio" name="source" value="0"<?php echo (intval($source) === 0) ? 'checked="checked"' : ''; ?>> beneath this page
+    <input type="radio" name="source" value="1"<?php echo (intval($source) === 1) ? 'checked="checked"' : ''; ?>> beneath another page    
+    <input type="radio" name="source" value="2"<?php echo (intval($source) === 2) ? 'checked="checked"' : ''; ?>> on a Google Calendar    
     
     <div id="pageSelectorContainer" style="display: none;">
         <?php print $pageSelector->selectPage('parentCID',$parentCID,'ccm_selectSitemapNode'); ?>
+    </div>
+
+    <div id="gcalContainer" style="display: none;">
+        <hr>
+        Google Calendar ID:<br>
+        <textarea name="calendarId" style="width: 100%;"><?php echo $calendarId; ?></textarea>
+        <br>
+        Google API Key:<br>
+        <textarea name="apiKey" style="width: 100%;"><?php echo $apiKey; ?></textarea>
     </div>
     
 </div>
@@ -32,24 +43,33 @@ $pageSelector = \Loader::helper('form/page_selector');
      
         function setPageSelectorState() {
          
-            $('input[name=eventsFrom]').each(function(){
+            $('input[name=source]').each(function(){
                 
-                if($(this).prop('checked') && $(this).val() == 'PARENT') {
+                if($(this).prop('checked') && $(this).val() == '0') {
                     
-                    $('#pageSelectorContainer').css('display', 'none');
+                    $('#pageSelectorContainer, #gcalContainer').css('display', 'none');
                     $('input[name=parentCID]').val('0');
+                    $('input[name=calendarId],input[name=apiKey').val('');
                    
-                } else if($(this).prop('checked')) {
+                } else if($(this).prop('checked') && $(this).val() == '1') {
                     
                     $('#pageSelectorContainer').css('display', 'block');
+                    $('#gcalContainer').css('display', 'none');
+                    $('input[name=calendarId],input[name=apiKey').val('');
                     
+                } else if($(this).prop('checked') && $(this).val() == '2') {
+
+                    $('#gcalContainer').css('display', 'block');
+                    $('#pageSelectorContainer').css('display', 'none');
+                    $('input[name=parentCID]').val('0');
+
                 }
             
             });
             
         }
         
-        $('input[name=eventsFrom]').change(setPageSelectorState);        
+        $('input[name=source]').change(setPageSelectorState);        
         setPageSelectorState();      
         
         

@@ -19,7 +19,7 @@ class Controller extends BlockController
 {
 	protected $btTable = 'btCalCalendar';
 	protected $btInterfaceWidth = "450";
-	protected $btInterfaceHeight = "160";
+	protected $btInterfaceHeight = "260";
 	protected $btCacheBlockRecord = true;
 	protected $btCacheBlockOutput = true;
 	protected $btCacheBlockOutputOnPost = true;

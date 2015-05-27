@@ -29,7 +29,7 @@ class Controller extends Package
 
     protected $pkgHandle = 'cal_package';
     protected $appVersionRequired = '5.7.1';
-    protected $pkgVersion = '0.0.2';
+    protected $pkgVersion = '0.0.3';
 
     public function getPackageDescription() 
     {
@@ -144,23 +144,33 @@ class Controller extends Package
         // Tooltip
         $al->register(
                 'css', 'cal/tooltip', 'assets/tooltip.css',
-                array('version' => '1.6.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
+                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
         );
         
         // Full Calendar
         $al->register(
                 'css', 'fullcalendar/css', 'assets/full-calendar/fullcalendar.css',
-                array('version' => '1.6.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
+                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
         );
 
         $al->register(
                 'css', 'fullcalendar/css-print', 'assets/full-calendar/fullcalendar.print.css',
-                array('version' => '1.6.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
+                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
         );
 
         $al->register(
                 'javascript', 'fullcalendar/js', 'assets/full-calendar/fullcalendar.js',
-                array('version' => '1.6.1', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => true, 'combine' => false), $this
+                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => true, 'combine' => false), $this
+        );
+
+        $al->register(
+                'javascript', 'fullcalendar/gcal', 'assets/full-calendar/gcal.js',
+                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => true, 'combine' => false), $this
+        );
+
+        $al->register(
+                'javascript', 'fullcalendar/moment', 'assets/full-calendar/lib/moment.min.js',
+                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => true, 'combine' => false), $this
         );
 
         $al->registerGroup(
@@ -168,7 +178,9 @@ class Controller extends Package
             array(
                 array('css', 'fullcalendar/css'), 
                 array('css', 'fullcalendar/css-print'),
+                array('javascript', 'fullcalendar/moment'),
                 array('javascript', 'fullcalendar/js'), 
+                array('javascript', 'fullcalendar/gcal'), 
                 array('css', 'cal/tooltip'),
                 array('javascript', 'bootstrap/tooltip')
             )
