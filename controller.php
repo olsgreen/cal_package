@@ -1,7 +1,8 @@
 <?php
-namespace Concrete\Package\CalPackage;
+namespace Concrete\Package\ConcreteCalendarPackage;
 
 use DateTime;
+use Exception;
 use AssetList;
 use Asset;
 use BlockType;
@@ -12,11 +13,12 @@ use Route;
 use CollectionAttributeKey;
 use PageList;
 use PageTemplate;
+use Concrete\Core\Attribute\Key\Category as AttributeCategory;
 use Concrete\Core\Attribute\Type as AttributeType;
 use \Concrete\Core\Page\Type\Composer\Control\Type\Type as PageTypeComposerControlType;
 use \Concrete\Core\Page\Type\PublishTarget\Type\Type as PageTypePublishTargetType;
+use \Concrete\Core\Page\Type\Composer\Control\CorePageProperty\NameCorePageProperty;
 
-defined('C5_EXECUTE') or die("Access Denied.");
 /**
  * Package adding calendar functionality to C5
  *
@@ -26,19 +28,20 @@ defined('C5_EXECUTE') or die("Access Denied.");
  */
 class Controller extends Package
 {
+    protected $pkgHandle = 'concrete-calendar-package';
 
-    protected $pkgHandle = 'cal_package';
     protected $appVersionRequired = '5.7.1';
-    protected $pkgVersion = '0.0.4';
 
-    public function getPackageDescription() 
+    protected $pkgVersion = '0.9.0';
+
+    public function getPackageName()
     {
-    	return t("Package adding simple calendar functionality to concrete.");
+        return t("Calendar Components Package");
     }
 
-    public function getPackageName() 
+    public function getPackageDescription()
     {
-    	return t("Calendar Components Package");
+        return t("Package adding simple calendar functionality to concrete.");
     }
 
     public function on_start()
@@ -47,21 +50,27 @@ class Controller extends Package
         $this->registerAssets();
     }
 
-    public function install() 
+    public function install()
     {
         $pkg = parent::install();
 
         // Get a list of installed page templates
         $templates = PageTemplate::getList();
         if (0 === count($templates)) {
-            throw Exception('This package requires at least one page template, there are no page templates defined.');
+            throw Exception(
+                'This package requires at least one page template, there are no page templates defined.'
+            );
         }
+
+        // Install the custom attribute type
+        $at = AttributeType::add('calendar_date_time', 'Calendar Date & Time', $pkg);
+        AttributeCategory::getByHandle('collection')->associateAttributeKeyType($at);
 
         // Install Calendar Entry Page Type
         $ePT = PageType::add(
             array(
                 'name' => 'Calendar Entry',
-                'handle' => 'cal_entry',
+                'handle' => 'calendar-entry',
                 'ptLaunchInComposer' => true,
                 'defaultTemplate' => $templates[0],
             ),
@@ -75,40 +84,45 @@ class Controller extends Package
         $ePT->setConfiguredPageTypePublishTargetObject($configuredTarget);
 
         // Add the 'Basics' composer control set to the page type
-        $basics_set = $ePT->addPageTypeComposerFormLayoutSet('Basics', 'Adds the basic fields for creating a new page.');
+        $basics_set = $ePT->addPageTypeComposerFormLayoutSet(
+            'Basics',
+            'Adds the basic fields for creating a new page.'
+        );
+
         $this->addCoreToComposerFormSet($basics_set);
 
-
-
         // Add Start & End Date / Time Attribute Keys
-		$sAK = CollectionAttributeKey::add(
-            AttributeType::getByHandle('date_time'),
+        $sAK = CollectionAttributeKey::add(
+            $at,
             array(
-    			'akHandle' => 'cal_start_date',
-    			'akName' => 'Calendar Entry Start Date / Time',
-    			'akIsSearchable' => 1,
-    			'akIsSearchableIndexed'=> 1,
-    			'akSelectAllowMultipleValues' => 0,
-    			'akSelectAllowOtherValues' => 0
-			),
+                'akHandle' => 'cal_start_date',
+                'akName' => 'Calendar Entry Start Date / Time',
+                'akIsSearchable' => 1,
+                'akIsSearchableIndexed'=> 1,
+                'akSelectAllowMultipleValues' => 0,
+                'akSelectAllowOtherValues' => 0
+            ),
             $pkg
         );
 
         $eAK = CollectionAttributeKey::add(
-            AttributeType::getByHandle('date_time'),
+            $at,
             array(
-    			'akHandle' => 'cal_end_date',
-    			'akName' => 'Calendar Entry End Date / Time',
-    			'akIsSearchable' => 1,
-    			'akIsSearchableIndexed'=> 1,
-    			'akSelectAllowMultipleValues' => 0,
-    			'akSelectAllowOtherValues' => 0
-		      ),
+                'akHandle' => 'cal_end_date',
+                'akName' => 'Calendar Entry End Date / Time',
+                'akIsSearchable' => 1,
+                'akIsSearchableIndexed'=> 1,
+                'akSelectAllowMultipleValues' => 0,
+                'akSelectAllowOtherValues' => 0
+              ),
             $pkg
         );
 
         // Add Composer Layout Set
-        $set = $ePT->addPageTypeComposerFormLayoutSet('Calendar Dates / Times', 'The dates and times that the entry will be shown on the calendar between.');
+        $set = $ePT->addPageTypeComposerFormLayoutSet(
+            'Calendar Dates / Times',
+            'The dates and times that the entry will be shown on the calendar between.'
+        );
 
         // Add the attributes to the page types composer form
         $this->addCollectionAttributeToComposerFormSet($set, $sAK);
@@ -116,7 +130,7 @@ class Controller extends Package
 
 
         // Install the calendar block type
-        $calendarBT = BlockType::installBlockTypeFromPackage('cal_calendar', $pkg);
+        $calendarBT = BlockType::installBlockTypeFromPackage('simple-calendar', $pkg);
 
         return $pkg;
 
@@ -131,7 +145,7 @@ class Controller extends Package
 
     protected function addCoreToComposerFormSet($set)
     {
-        $control = new \Concrete\Core\Page\Type\Composer\Control\CorePageProperty\NameCorePageProperty();
+        $control = new NameCorePageProperty();
         $control->setPageTypeComposerControlName('Entry Name');
         return $control->addToPageTypeComposerFormLayoutSet($set);
     }
@@ -140,47 +154,83 @@ class Controller extends Package
     {
         // Register themes assets
         $al = AssetList::getInstance();
-        
+
         // Tooltip
         $al->register(
-                'css', 'cal/tooltip', 'assets/tooltip.css',
-                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
+            'css',
+            'cal/tooltip',
+            'assets/tooltip.css',
+            array(
+                'version' => '2.3.1', 'position' => Asset::ASSET_POSITION_HEADER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
         );
-        
+
         // Full Calendar
         $al->register(
-                'css', 'fullcalendar/css', 'assets/full-calendar/fullcalendar.css',
-                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
+            'css',
+            'fullcalendar/css',
+            'assets/full-calendar/fullcalendar.css',
+            array(
+                'version' => '2.3.1', 'position' => Asset::ASSET_POSITION_HEADER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
         );
 
         $al->register(
-                'css', 'fullcalendar/css-print', 'assets/full-calendar/fullcalendar.print.css',
-                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
+            'css',
+            'fullcalendar/css-print',
+            'assets/full-calendar/fullcalendar.print.css',
+            array(
+                'version' => '2.3.1', 'position' => Asset::ASSET_POSITION_HEADER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
         );
 
         $al->register(
-                'javascript', 'fullcalendar/js', 'assets/full-calendar/fullcalendar.js',
-                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => true, 'combine' => false), $this
+            'javascript',
+            'fullcalendar/js',
+            'assets/full-calendar/fullcalendar.js',
+            array(
+                'version' => '2.3.1', 'position' => Asset::ASSET_POSITION_FOOTER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
         );
 
         $al->register(
-                'javascript', 'fullcalendar/gcal', 'assets/full-calendar/gcal.js',
-                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => true, 'combine' => false), $this
+            'javascript',
+            'fullcalendar/gcal',
+            'assets/full-calendar/gcal.js',
+            array(
+                'version' => '2.3.1', 'position' => Asset::ASSET_POSITION_FOOTER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
         );
 
         $al->register(
-                'javascript', 'fullcalendar/moment', 'assets/full-calendar/lib/moment.min.js',
-                array('version' => '2.3.1', 'position' => Asset::ASSET_POSITION_FOOTER, 'minify' => true, 'combine' => false), $this
+            'javascript',
+            'fullcalendar/moment',
+            'assets/full-calendar/lib/moment.min.js',
+            array(
+                'version' => '2.3.1', 'position' => Asset::ASSET_POSITION_FOOTER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
         );
 
         $al->registerGroup(
             'fullcalendar',
             array(
-                array('css', 'fullcalendar/css'), 
+                array('css', 'fullcalendar/css'),
                 array('css', 'fullcalendar/css-print'),
                 array('javascript', 'fullcalendar/moment'),
-                array('javascript', 'fullcalendar/js'), 
-                array('javascript', 'fullcalendar/gcal'), 
+                array('javascript', 'fullcalendar/js'),
+                array('javascript', 'fullcalendar/gcal'),
                 array('css', 'cal/tooltip'),
                 array('javascript', 'bootstrap/tooltip')
             )
@@ -188,8 +238,14 @@ class Controller extends Package
 
         // Mini Calendar
         $al->register(
-                'javascript', 'minicalendar/js', 'assets/mini-calendar/jquery.mini-calendar.js',
-                array('version' => '1.6.1', 'position' => Asset::ASSET_POSITION_HEADER, 'minify' => true, 'combine' => false), $this
+            'javascript',
+            'minicalendar/js',
+            'assets/mini-calendar/jquery.mini-calendar.js',
+            array(
+                'version' => '1.6.1', 'position' => Asset::ASSET_POSITION_HEADER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
         );
 
         $al->registerGroup(
@@ -202,42 +258,45 @@ class Controller extends Package
         );
     }
 
+    protected function getFormattedEvent($page)
+    {
+        return array(
+            'title' => $page->getCollectionName(),
+            'start' => DateTime::createFromFormat(
+                'Y-m-d H:i:s',
+                $page->getAttribute('cal_start_date')
+            )->format(DATE_ISO8601),
+            'end' => DateTime::createFromFormat(
+                'Y-m-d H:i:s',
+                $page->getAttribute('cal_end_date')
+            )->format(DATE_ISO8601),
+            'url' => View::url($page->getCollectionPath()),
+            'allDay' => false,
+            'ignoreTimezone' => false
+        );
+    }
+
     protected function registerCalendarJsonRoute()
     {
-        Route::register('/get-cal-json/{parent_cid}', function($parent_cid) {
+        Route::register(
+            '/get-cal-json/{parent_cid}',
+            function ($parent_cid) {
+                $pl = new PageList();
+                $pl->filterByCollectionTypeHandle('cal_entry');
 
-            $pl = new PageList();
-            $pl->filterByCollectionTypeHandle('cal_entry');
-            if (intval($parent_cid) > 0) {
-                $pl->filterByParentID(intval($parent_cid));
-            }
+                if (intval($parent_cid) > 0) {
+                    $pl->filterByParentID(intval($parent_cid));
+                }
 
-            $events = array();
+                $events = array();
 
-            foreach($pl->get() as $page) {
+                foreach ($pl->get() as $page) {
+                    $events[] = $this->getFormattedEvent($page);
+                }
 
-                $events[] = array(
-                    'title' => $page->getCollectionName(),
-                    'start' => DateTime::createFromFormat(
-                        'Y-m-d H:i:s',
-                        $page->getAttribute('cal_start_date')
-                    )
-                    ->format(DATE_ISO8601),
-                    'end' => DateTime::createFromFormat(
-                        'Y-m-d H:i:s',
-                        $page->getAttribute('cal_end_date')
-                    )
-                    ->format(DATE_ISO8601),
-                    'url' => View::url($page->getCollectionPath()),
-                    'allDay' => false,
-                    'ignoreTimezone' => false
-                );
-
-            }
-
-            return json_encode($events);
-        },
-        null
+                return json_encode($events);
+            },
+            null
         );
     }
 }
