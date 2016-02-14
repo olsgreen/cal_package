@@ -256,6 +256,38 @@ class Controller extends Package
                 array('javascript', 'bootstrap/tooltip')
             )
         );
+
+        // Boostrap Date Range Picker
+        $al->register(
+            'javascript',
+            'bootstrap-daterangepicker/js',
+            'assets/bootstrap-daterangepicker/daterangepicker.js',
+            array(
+                'version' => '2.1.17', 'position' => Asset::ASSET_POSITION_FOOTER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
+        );
+
+        $al->register(
+            'css',
+            'bootstrap-daterangepicker/css',
+            'assets/bootstrap-daterangepicker/daterangepicker.css',
+            array(
+                'version' => '2.1.17', 'position' => Asset::ASSET_POSITION_HEADER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
+        );
+
+        $al->registerGroup(
+            'bootstrap-daterangepicker',
+            array(
+                array('javascript', 'fullcalendar/moment'),
+                array('javascript', 'bootstrap-daterangepicker/js'),
+                array('css', 'bootstrap-daterangepicker/css'),
+            )
+        );
     }
 
     protected function getFormattedEvent($page)
