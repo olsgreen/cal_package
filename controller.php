@@ -70,7 +70,7 @@ class Controller extends Package
         $ePT = PageType::add(
             array(
                 'name' => 'Calendar Entry',
-                'handle' => 'calendar-entry',
+                'handle' => 'calendar_entry',
                 'ptLaunchInComposer' => true,
                 'defaultTemplate' => $templates[0],
             ),
@@ -96,7 +96,7 @@ class Controller extends Package
             $at,
             array(
                 'akHandle' => 'cal_start_date',
-                'akName' => 'Calendar Entry Start Date / Time',
+                'akName' => 'Calendar Entry Date / Time',
                 'akIsSearchable' => 1,
                 'akIsSearchableIndexed'=> 1,
                 'akSelectAllowMultipleValues' => 0,
@@ -105,32 +105,12 @@ class Controller extends Package
             $pkg
         );
 
-        $eAK = CollectionAttributeKey::add(
-            $at,
-            array(
-                'akHandle' => 'cal_end_date',
-                'akName' => 'Calendar Entry End Date / Time',
-                'akIsSearchable' => 1,
-                'akIsSearchableIndexed'=> 1,
-                'akSelectAllowMultipleValues' => 0,
-                'akSelectAllowOtherValues' => 0
-              ),
-            $pkg
-        );
-
-        // Add Composer Layout Set
-        $set = $ePT->addPageTypeComposerFormLayoutSet(
-            'Calendar Dates / Times',
-            'The dates and times that the entry will be shown on the calendar between.'
-        );
-
         // Add the attributes to the page types composer form
-        $this->addCollectionAttributeToComposerFormSet($set, $sAK);
-        $this->addCollectionAttributeToComposerFormSet($set, $eAK);
+        $this->addCollectionAttributeToComposerFormSet($basics_set, $sAK);
 
 
         // Install the calendar block type
-        $calendarBT = BlockType::installBlockTypeFromPackage('simple-calendar', $pkg);
+        $calendarBT = BlockType::installBlockTypeFromPackage('simple_calendar', $pkg);
 
         return $pkg;
 
@@ -288,22 +268,36 @@ class Controller extends Package
                 array('css', 'bootstrap-daterangepicker/css'),
             )
         );
+
+        // Form Control JS
+        $al->register(
+            'javascript',
+            'calendar-control/js',
+            'assets/calendar-control.js',
+            array(
+                'version' => '0.9.0', 'position' => Asset::ASSET_POSITION_FOOTER,
+                'minify' => true, 'combine' => false
+            ),
+            $this
+        );
     }
 
     protected function getFormattedEvent($page)
     {
+        $row = $page->getAttribute('cal_start_date');
+
         return array(
             'title' => $page->getCollectionName(),
             'start' => DateTime::createFromFormat(
                 'Y-m-d H:i:s',
-                $page->getAttribute('cal_start_date')
+                $row['date_from']
             )->format(DATE_ISO8601),
             'end' => DateTime::createFromFormat(
                 'Y-m-d H:i:s',
-                $page->getAttribute('cal_end_date')
+                $row['date_to']
             )->format(DATE_ISO8601),
             'url' => View::url($page->getCollectionPath()),
-            'allDay' => false,
+            'allDay' => $row['is_all_day'] ? true : false,
             'ignoreTimezone' => false
         );
     }
@@ -314,7 +308,7 @@ class Controller extends Package
             '/get-cal-json/{parent_cid}',
             function ($parent_cid) {
                 $pl = new PageList();
-                $pl->filterByCollectionTypeHandle('cal_entry');
+                $pl->filterByCollectionTypeHandle('calendar_entry');
 
                 if (intval($parent_cid) > 0) {
                     $pl->filterByParentID(intval($parent_cid));

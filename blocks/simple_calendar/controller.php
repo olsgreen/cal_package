@@ -15,7 +15,7 @@ use Concrete\Core\Block\BlockController;
  */
 class Controller extends BlockController
 {
-    protected $btTable = 'btCalCalendar';
+    protected $btTable = 'btSimpleCalendar';
     protected $btInterfaceWidth = "450";
     protected $btInterfaceHeight = "260";
     protected $btCacheBlockRecord = true;

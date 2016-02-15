@@ -104,14 +104,14 @@ $(function(){
             for(var i=0; i < settings.events.length; i++) {
                 
                 // Calculate it's date range
-                var start = new Date.parse(settings.events[i].start),
-                    end = new Date.parse(settings.events[i].end),
+                var start = moment(settings.events[i].start),
+                    end = moment(settings.events[i].end),
                     startDay = true;
                 
                 while(start <= end) {
                  
                     // Mark the date
-                    var dateSlug = start.getFullYear() + '-' + start.getMonth() + '-' + start.getDate();
+                    var dateSlug = start.year() + '-' + start.month() + '-' + start.date();
                     ele.find('td[data-date=' + dateSlug + ']').addClass('selected');
                     
                     if(typeof dayData[dateSlug] != 'object') {
@@ -121,7 +121,7 @@ $(function(){
                     // Add the day data to our object
                     dayData[dateSlug].push($.extend({ startDay: startDay }, settings.events[i]));
                     
-                    start = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1);
+                    start = new Date(start.year(), start.month(), start.date() + 1);
                     startDay = false;
                     
                 }
@@ -175,8 +175,8 @@ $(function(){
         {
             var test = $.fullCalendar.sourceFetchers[0](
             {
-                googleCalendarApiKey: 'AIzaSyACspEsSbldhRyvER3ud6TsPbM7NWmyc04', 
-                googleCalendarId: 'libfd9tmcnncjcbia44eu4h6ts@group.calendar.google.com', 
+                googleCalendarApiKey: '', 
+                googleCalendarId: '', 
                 timeFormat: 'h:mm',
                 success: function(data) { settings.events = data; dataComplete.notify(); },
             }, $.fullCalendar.moment(new Date('05/01/2015')), $.fullCalendar.moment(new Date('05/31/2015')));
