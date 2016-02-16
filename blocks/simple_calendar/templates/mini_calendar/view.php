@@ -26,8 +26,18 @@ $parentCID = ($parentCID > 0) ? $parentCID : $c->getCollectionID();?>
             dayOnMouseOver: function(evt, data){
                 var title = '';
                 for(var i=0; i < data.length; i++) {
-                    var date = moment(data[i].start).toDate();
-                        title += date.getHours() + ':' + ((date.getMinutes() < 10) ? date.getMinutes() + '0' : date.getMinutes()) + ' ' + data[i].title + '<br />';
+                    var startDate = moment(data[i].start).toDate(),
+                        endDate = moment(data[i].end).toDate();
+
+                    if (! data[i].allDay && data[i].startDay) {
+                        title += startDate.getHours() + ':' + ((startDate.getMinutes() < 10) ? startDate.getMinutes() + '0' : startDate.getMinutes()) + ' ';
+                    }
+
+                    if (! data[i].allDay && data[i].endDay) {
+                        title += endDate.getHours() + ':' + ((endDate.getMinutes() < 10) ? endDate.getMinutes() + '0' : endDate.getMinutes()) + ' ';
+                    }
+
+                    title += data[i].title + '<br />';
                 }
                 $(evt.delegateTarget).tooltip({title: title.substr(0,title.length - 6), container: 'body', html: true}).tooltip('show');
             },

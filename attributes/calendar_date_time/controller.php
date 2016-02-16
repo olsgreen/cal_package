@@ -65,6 +65,11 @@ class Controller extends AttributeTypeController
         $this->set('row', $this->getValue());
     }
 
+    public function getDisplaySanitizedValue() 
+    {
+        return $this->getDisplayValue();
+    }
+
 
     public function validateValue()
     {

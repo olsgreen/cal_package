@@ -69,7 +69,10 @@ $(function(){
                     tr = $('<tr></tr>');                
                 }
                 
-                var td = $('<td></td>').append($('<span></span>').html(startFrom.getDate())).attr('data-date', startFrom.getFullYear() + '-' + startFrom.getMonth() + '-' + startFrom.getDate());
+                var td = $('<td></td>')
+                    .append($('<span></span>')
+                    .html(startFrom.getDate()))
+                    .attr('data-date', startFrom.getFullYear() + '-' + startFrom.getMonth() + '-' + startFrom.getDate());
                 
                 // If the day is not part of the requested month mark it
                 if(startFrom.getMonth() != currentDate.month) td.addClass('filler-day');
@@ -107,6 +110,7 @@ $(function(){
                 var start = moment(settings.events[i].start),
                     end = moment(settings.events[i].end),
                     startDay = true;
+                    endDay = false;
                 
                 while(start <= end) {
                  
@@ -117,11 +121,16 @@ $(function(){
                     if(typeof dayData[dateSlug] != 'object') {
                         dayData[dateSlug] = [];
                     }
-                    
+
+                    if (start.format('DMYYYY') === end.format('DMYYYY')) {
+                        endDay = true;
+                    }
+
                     // Add the day data to our object
-                    dayData[dateSlug].push($.extend({ startDay: startDay }, settings.events[i]));
+                    dayData[dateSlug].push($.extend({ startDay: startDay, endDay: endDay }, settings.events[i]));
                     
-                    start = new Date(start.year(), start.month(), start.date() + 1);
+                    start.add(1, 'day');
+
                     startDay = false;
                     
                 }
