@@ -21,7 +21,7 @@
             if (has_times) {
                 $.extend(options, {
                     timePicker: true,
-                    timePickerIncrement: 30,
+                    timePickerIncrement: 5,
                     locale: {
                         format: 'DD/MM/YYYY h:mm A'
                     }
