@@ -17,7 +17,7 @@ $parentCID = ($parentCID > 0) ? $parentCID : $c->getCollectionID();?>
     $(document).ready(function() {
         $("#calendar-<?php echo $bID; ?>").miniCalendar({
             <?php if ($source !== '2') { ?>
-            url: '<?php echo View::url("/get-cal-json", $parentCID); ?>',
+            url: '<?php echo View::url("/get-cal-json", $parentCID); ?>?forMini=true',
             <?php } else { ?>
             googleCalendarApiKey: '<?php echo $apiKey; ?>',
             googleCalendarId: '<?php echo $calendarId; ?>',

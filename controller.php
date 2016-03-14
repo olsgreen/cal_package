@@ -286,16 +286,22 @@ class Controller extends Package
     {
         $row = $page->getAttribute('cal_start_date');
 
+        $end_date = DateTime::createFromFormat(
+            'Y-m-d H:i:s',
+            $row['date_to']
+        );
+
+        if ($row['is_all_day'] && ! isset($_GET['forMini'])) {
+            $end_date->modify('+1 Day');
+        }
+
         return array(
             'title' => $page->getCollectionName(),
             'start' => DateTime::createFromFormat(
                 'Y-m-d H:i:s',
                 $row['date_from']
             )->format(DATE_ISO8601),
-            'end' => DateTime::createFromFormat(
-                'Y-m-d H:i:s',
-                $row['date_to']
-            )->format(DATE_ISO8601),
+            'end' => $end_date->format(DATE_ISO8601),
             'url' => View::url($page->getCollectionPath()),
             'allDay' => $row['is_all_day'] ? true : false,
             'ignoreTimezone' => false
