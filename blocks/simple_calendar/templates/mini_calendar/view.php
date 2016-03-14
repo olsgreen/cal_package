@@ -33,7 +33,7 @@ $parentCID = ($parentCID > 0) ? $parentCID : $c->getCollectionID();?>
                         title += startDate.getHours() + ':' + ((startDate.getMinutes() < 10) ? startDate.getMinutes() + '0' : startDate.getMinutes()) + ' ';
                     }
 
-                    if (! data[i].allDay && data[i].endDay) {
+                    if (! data[i].allDay && data[i].endDay && startDate.getHours() !== endDate.getHours()) {
                         title += endDate.getHours() + ':' + ((endDate.getMinutes() < 10) ? endDate.getMinutes() + '0' : endDate.getMinutes()) + ' ';
                     }
 
