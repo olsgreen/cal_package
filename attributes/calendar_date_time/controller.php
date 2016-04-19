@@ -11,6 +11,16 @@ class Controller extends AttributeTypeController
 
     protected $searchIndexFieldDefinition = array('type' => 'datetime', 'options' => array('notnull' => false));
 
+    public function getSearchIndexValue()
+    {
+        $v = $this->getValue();
+        if(empty($v)) {
+            return '';
+        }
+
+        return $v['date_from'];
+    }
+
     public function getDisplayValue()
     {
         $v = $this->getValue();

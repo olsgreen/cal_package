@@ -116,9 +116,9 @@ $(function(){
                  
                     // Mark the date
                     var dateSlug = start.year() + '-' + start.month() + '-' + start.date();
-                    ele.find('td[data-date=' + dateSlug + ']').addClass('selected');
+                    $ele = ele.find('td[data-date=' + dateSlug + ']').addClass('selected');
                     
-                    if(typeof dayData[dateSlug] != 'object') {
+                    if (typeof dayData[dateSlug] != 'object') {
                         dayData[dateSlug] = [];
                     }
 
@@ -136,9 +136,51 @@ $(function(){
                 }
             
             }
+
+            paintPartialDays(dayData);
             
             dataComplete.resolve();
             
+        }
+
+        function paintPartialDays(dayData)
+        {
+            var default_colour = $('.mini-calendar .selected span').css('background-color');
+
+            for (var i in dayData) {
+                var colours = [];
+
+                for (var c in dayData[i]) {
+                    if (dayData[i][c].color) {
+                        colours.push(dayData[i][c].color);
+                    } else {
+                        colours.push(default_colour);
+                    }
+                }
+
+                if (colours.length >= 1) {
+                    $ele = $('td[data-date="' + i + '"] span');
+
+                    paintBackground($ele, colours);
+                }
+            }
+        }
+
+        function paintBackground($ele, colours)
+        {
+            var split = 100 / colours.length;
+
+            var css = 'linear-gradient(45deg ';
+
+            for (var i = 0; i < colours.length; i++) {
+                css += ', ' + colours[i] + ' ' + Math.round(split * i) + '%, ';
+                css += colours[i] + ' ' + Math.round(split * (i+ 1)) + '%';
+            }
+
+            css += ')';
+
+            $ele.css('background', css);
+
         }
         
         function plugEvents(ele) {

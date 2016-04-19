@@ -32,7 +32,7 @@ class Controller extends Package
 
     protected $appVersionRequired = '5.7.1';
 
-    protected $pkgVersion = '0.9.0';
+    protected $pkgVersion = '0.9.1';
 
     public function getPackageName()
     {
@@ -107,7 +107,6 @@ class Controller extends Package
 
         // Add the attributes to the page types composer form
         $this->addCollectionAttributeToComposerFormSet($basics_set, $sAK);
-
 
         // Install the calendar block type
         $calendarBT = BlockType::installBlockTypeFromPackage('simple_calendar', $pkg);
@@ -295,17 +294,29 @@ class Controller extends Package
             $end_date->modify('+1 Day');
         }
 
-        return array(
+        $start_date = DateTime::createFromFormat(
+            'Y-m-d H:i:s',
+            $row['date_from']
+        );
+
+        if (! $start_date) {
+            return [];
+        }
+
+        $result = array(
             'title' => $page->getCollectionName(),
-            'start' => DateTime::createFromFormat(
-                'Y-m-d H:i:s',
-                $row['date_from']
-            )->format(DATE_ISO8601),
+            'start' => $start_date->format(DATE_ISO8601),
             'end' => $end_date->format(DATE_ISO8601),
             'url' => View::url($page->getCollectionPath()),
             'allDay' => $row['is_all_day'] ? true : false,
-            'ignoreTimezone' => false
+            'ignoreTimezone' => false,
         );
+
+        if ($colour = $page->getAttribute('colour')) {
+            $result['color'] = '#'.$colour['colour'];
+        }
+
+        return $result;
     }
 
     protected function registerCalendarJsonRoute()
